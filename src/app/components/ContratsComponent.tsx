@@ -17,7 +17,7 @@ export const ContratsComponent = () => {
                 </div>
 
                 <div className="border-t border-gray-200 mt-6 pt-4 flex justify-center">
-                    <Button size="sm" onClick={() => router.push("/dashboard/data")} variant="default">
+                    <Button size="sm" onClick={() => router.push("/data")} variant="default">
                         Iniciar el proceso
                     </Button>
                 </div>

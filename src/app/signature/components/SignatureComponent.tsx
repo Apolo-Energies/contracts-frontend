@@ -13,7 +13,7 @@ export const SignatureComponent = () => {
     // Si no hay URL, regresamos a documentos
     useEffect(() => {
         if (!signingUrl) {
-            router.push("/dashboard");
+            router.push("/");
         }
     }, [signingUrl]);
 

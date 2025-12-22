@@ -79,7 +79,7 @@ export const DocumentsComponent = () => {
 
 
             setSignatureResult(result.requestId, result.signingUrl ?? result.url);
-            router.push("/dashboard/signature");
+            router.push("/signature");
         } finally {
             setLoading(false);
         }

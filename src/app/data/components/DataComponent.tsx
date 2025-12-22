@@ -82,7 +82,7 @@ export const DataComponent = () => {
       });
     }
 
-    router.push("/dashboard/documents");
+    router.push("/documents");
   };
 
 
