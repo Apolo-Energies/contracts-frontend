@@ -1,26 +1,104 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer theme, base, components, utilities;
+
+/* BASE THEME (LIGHT MODE) */
+@theme {
+  --font-poppins: var(--font-poppins);
+
+  --color-background: #f9fafb;
+  --color-body: #f9fafb;
+  --color-foreground: #0f172a;
+
+  --color-card: #ffffff;
+  --color-card-foreground: #0f172a;
+
+  --color-popover: #ffffff;
+  --color-popover-foreground: #0f172a;
+
+  --color-primary: #3b82f6;
+  --color-primary-foreground: #f8fafc;
+
+  --color-secondary: #f1f5f9;
+  --color-secondary-foreground: #0f172a;
+
+  --color-muted: #f1f5f9;
+  --color-muted-foreground: #64748b;
+
+  --color-accent: #f1f5f9;
+  --color-accent-foreground: #0f172a;
+
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #f8fafc;
+
+  --color-border: #e2e8f0;
+  --color-input: #e2e8f0;
+  --color-ring: #3b82f6;
+
+  --radius: 0.5rem;
+
+  --color-chart-1: #f97316;
+  --color-chart-2: #10b981;
+  --color-chart-3: #3b82f6;
+  --color-chart-4: #f59e0b;
+  --color-chart-5: #ef4444;
+
+  --color-info-bg: #e8f0fc;
+  --color-info-border: rgba(188, 209, 243, 0.2);
+  --color-info-dot: #0b57d0;
+  --color-info-title: #0c1220;
+  --color-info-subtext: #6e7278;
+
+  --color-tradding-up: #1AD5981A;
+  --color-tradding-text-up: #1AD598;
+  --color-text-green: #5EEA8D;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* DARK MODE (FORCE VIA CLASS) */
+.dark {
+  --color-background: #0f172a;
+  --color-foreground: #f8fafc;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+  --color-card: #17181A;
+  --color-body: #25272A;
+  --color-card-foreground: #f8fafc;
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  --color-popover: #0f172a;
+  --color-popover-foreground: #f8fafc;
+
+  --color-primary: #60a5fa;
+  --color-primary-foreground: #0f172a;
+
+  --color-secondary: #1e293b;
+  --color-secondary-foreground: #f8fafc;
+
+  --color-muted: #1e293b;
+  --color-muted-foreground: #809FB8;
+
+  --color-accent: #323438;
+  --color-accent-foreground: #f8fafc;
+
+  --color-destructive: #7f1d1d;
+  --color-destructive-foreground: #f8fafc;
+
+  --color-border: #323438;
+  --color-input: #17181A;
+  --color-ring: #94a3b8;
+
+  --color-chart-1: #fb923c;
+  --color-chart-2: #34d399;
+  --color-chart-3: #60a5fa;
+  --color-chart-4: #fbbf24;
+  --color-chart-5: #f87171;
+
+  --color-tradding-up: #1AD5981A;
+  --color-tradding-text-up: #1AD598;
+
+  --color-button-primary: #12AFF0;
+
+  --color-info-bg: rgba(11, 87, 208, 0.1);
+  --color-info-title: #ffffff;
+  --color-info-subtext: #ffffff;
 }
