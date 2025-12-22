@@ -27,6 +27,7 @@ export interface DocumentState {
 interface ContractStore {
   person: PersonState | null;
   document: DocumentState | null;
+  documentos?: { filePreview?: string; type?: string };
 
   requestId: string | null;
   signingUrl: string | null;
@@ -42,6 +43,7 @@ interface ContractStore {
 export const useContratoStore = create<ContractStore>((set) => ({
   person: null,
   document: null,
+  documentos: undefined,
 
   requestId: null,
   signingUrl: null,
@@ -56,6 +58,7 @@ export const useContratoStore = create<ContractStore>((set) => ({
   reset: () => set({
     person: null,
     document: null,
+    documentos: undefined,
     requestId: null,
     signingUrl: null
   }),
