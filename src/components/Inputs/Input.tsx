@@ -1,51 +1,60 @@
-import React from "react";
 import {
   FieldErrors,
   FieldValues,
   Path,
-  UseFormRegister,
+  UseFormRegisterReturn,
+  FieldNamesMarkedBoolean,
 } from "react-hook-form";
+import { FormEvent } from "react";
 
 interface Props<T extends FieldValues> {
   label: string;
   name: Path<T>;
-  type?: string;
-  placeholder?: string;
-  register: UseFormRegister<T>;
-  required?: boolean;
+  register: UseFormRegisterReturn;
   errors?: FieldErrors<T>;
-  defaultValue?: string | number;
+  touchedFields?: FieldNamesMarkedBoolean<T>;
+  submitCount?: number;
+  placeholder?: string;
+  type?: string;
+  onInput?: (e: FormEvent<HTMLInputElement>) => void;
 }
 
 export const Input = <T extends FieldValues>({
   label,
   name,
-  type = "text",
-  placeholder,
   register,
-  required = false,
   errors,
-  defaultValue
+  touchedFields,
+  submitCount = 0,
+  placeholder,
+  type = "text",
+  onInput,
 }: Props<T>) => {
+  const error = errors?.[name];
+
+  const isTouched =
+    !!touchedFields &&
+    Boolean((touchedFields as Record<string, boolean | undefined>)[name]);
+
+  const showError = Boolean(error && (isTouched || submitCount > 0));
+
   return (
     <div className="space-y-1">
-      <label htmlFor={name} className="block text-sm font-normal text-[14px] text-foreground">
-        {label} {required && <span className="text-red-500">*</span>}
-      </label>
+      <label className="block text-sm text-foreground">{label}</label>
+
       <input
-        id={name}
+        {...register}
         type={type}
         placeholder={placeholder}
-        {...register(name, { required })}
-        className={`w-full placeholder:text-gray-400 bg-input text-sm rounded border px-3 py-1.5 focus:outline-none focus:ring ${
-          errors && errors[name]
-            ? "border-red-500 ring-red-500"
-            : "border-border ring-blue-500"
-        }`}
-        defaultValue={defaultValue}
+        onInput={onInput}
+        className={`w-full rounded border px-3 py-1.5 ${showError ? "border-red-500" : "border-border"
+          }`}
       />
-      {errors && errors[name] && (
-        <p className="text-xs text-red-600 mt-1">Este campo es obligatorio</p>
+
+      {showError && (
+        <p className="text-xs text-red-600">
+          {String(error?.message)}
+        </p>
       )}
     </div>
   );

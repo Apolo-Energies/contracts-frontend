@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 export interface PersonState {
-  type: "autonomo" | "empresa";
+  type: "Individual" | "Company";
   dni?: string,
   name?: string,
   surnames?: string,

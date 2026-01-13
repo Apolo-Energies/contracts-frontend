@@ -5,3 +5,9 @@ export interface ApiResponse<T> {
   errorMessages: string[] | null;
   status: number;
 }
+
+export interface SignatureResult {
+  requestId: string;
+  signingUrl: string;
+}
+

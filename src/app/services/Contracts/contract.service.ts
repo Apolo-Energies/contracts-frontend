@@ -1,11 +1,12 @@
 import { ApiManager } from "../ApiManager/ApiManager";
+import { ApiResponse, SignatureResult } from "../interfaces/ApiResponse";
 
 export type CreateContractPayload = {
     email?: string;
     name?: string;
     phone?: string;
     flowType: number;
-    contractType: "autonomo" | "empresa";
+    contractType: "Individual" | "Company";
     day: string;
     month: string;
     year: string;
@@ -18,6 +19,7 @@ export type CreateContractPayload = {
     message?: string;
     surnames?: string;
     companyName?: string;
+    bankAccount: string;
 };
 
 export interface DocumentState {
@@ -36,12 +38,11 @@ export interface DocumentState {
   cif?: File;
 }
 
-
-
 export async function createContractSignature(
   payload: CreateContractPayload,
   documents: DocumentState
-) {
+): Promise<ApiResponse<SignatureResult>> {
+
   const form = new FormData();
 
   Object.entries(payload).forEach(([k, v]) => {
@@ -56,11 +57,11 @@ export async function createContractSignature(
     }
   });
 
-  const res = await ApiManager.post("/contracts/create", form, {
-    headers: {
-      "Content-Type": "multipart/form-data",
-    },
-  });
+  const res = await ApiManager.post<ApiResponse<SignatureResult>>(
+    "/contracts/create",
+    form,
+    { headers: { "Content-Type": "multipart/form-data" } }
+  );
 
   return res.data;
 }

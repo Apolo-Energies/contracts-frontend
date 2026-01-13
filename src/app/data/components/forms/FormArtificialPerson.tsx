@@ -1,115 +1,177 @@
-import { FieldErrors, UseFormRegister } from "react-hook-form";
-import { NaturalPerson, ArtificialPerson } from "../../interfaces/person";
+import {
+    FieldErrors,
+    UseFormRegister,
+    FieldNamesMarkedBoolean,
+} from "react-hook-form";
+import { ArtificialPerson } from "../../interfaces/person";
 import { Input } from "@/components/Inputs/Input";
+import { formatIbanES } from "@/utils/formats";
 
 interface Props {
-    register: UseFormRegister<NaturalPerson | ArtificialPerson>;
-    errors: FieldErrors<NaturalPerson | ArtificialPerson>;
+    register: UseFormRegister<ArtificialPerson>;
+    errors: FieldErrors<ArtificialPerson>;
+    touchedFields: FieldNamesMarkedBoolean<ArtificialPerson>;
+    submitCount: number;
 }
 
-export const FormArtificialPerson = ({ register, errors }: Props) => {
+export const FormArtificialPerson = ({
+    register,
+    errors,
+    touchedFields,
+    submitCount,
+}: Props) => {
     return (
-        <div className="space-y-2">
-            <div className="grid grid-cols-1 gap-6">
-                 {/* DNI */}
-                <Input
-                    label="DNI"
-                    name="dni"
-                    placeholder="Apolo"
-                    register={register}
-                    required
-                    errors={errors}
-                />
+        <div className="grid grid-cols-1 gap-6">
+            <Input
+                label="DNI"
+                name="dni"
+                placeholder="12345678A"
+                register={register("dni", {
+                    required: "El DNI es obligatorio",
+                    pattern: {
+                        value: /^[0-9]{8}[A-Za-z]$/,
+                        message: "Formato inválido. Ej: 12345678A",
+                    },
+                })}
+                errors={errors}
+                touchedFields={touchedFields}
+                submitCount={submitCount}
+            />
 
-                {/* Email */}
-                <Input
-                    label="Email"
-                    name="email"
-                    placeholder="apolo@apoloenergies.es"
-                    register={register}
-                    required
-                    errors={errors}
-                />
+            <Input
+                label="Email"
+                name="email"
+                placeholder="apolo@apoloenergies.es"
+                register={register("email", {
+                    required: "El email es obligatorio",
+                    pattern: {
+                        value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                        message: "Email inválido",
+                    },
+                })}
+                errors={errors}
+                touchedFields={touchedFields}
+                submitCount={submitCount}
+            />
 
-                {/* Nombre */}
-                <Input
-                    label="Nombre"
-                    name="name"
-                    placeholder="Apolo"
-                    register={register}
-                    required
-                    errors={errors}
-                />
+            <Input
+                label="Nombre"
+                name="name"
+                register={register("name", {
+                    required: "El nombre es obligatorio",
+                    maxLength: {
+                        value: 50,
+                        message: "El nombre debe tener máximo 50 caracteres",
+                    },
+                })}
+                errors={errors}
+                touchedFields={touchedFields}
+                submitCount={submitCount}
+            />
 
-                {/* Apellidos */}
-                <Input
-                    label="Apellidos"
-                    name="surnames"
-                    placeholder="Apolo"
-                    register={register}
-                    required
-                    errors={errors}
-                />
+            <Input
+                label="Apellidos"
+                name="surnames"
+                register={register("surnames", {
+                    required: "Los apellidos son obligatorios",
+                    maxLength: {
+                        value: 50,
+                        message: "Los apellidos deben tener máximo 50 caracteres",
+                    },
+                })}
+                errors={errors}
+                touchedFields={touchedFields}
+                submitCount={submitCount}
+            />
 
-                {/* Domicilio Social */}
-                <Input
-                    label="Domicilio Social"
-                    name="address_1"
-                    placeholder="Apolo"
-                    register={register}
-                    required
-                    errors={errors}
-                />
+            <Input
+                label="Domicilio Social"
+                name="address_1"
+                register={register("address_1", {
+                    required: "El domicilio social es obligatorio",
+                })}
+                errors={errors}
+                touchedFields={touchedFields}
+                submitCount={submitCount}
+            />
 
-                {/* Domicilio Notificaciones */}
-                <Input
-                    label="Domicilio Notificaciones"
-                    name="address_2"
-                    placeholder="Apolo"
-                    register={register}
-                    required
-                    errors={errors}
-                />
+            <Input
+                label="Domicilio Notificaciones"
+                name="address_2"
+                register={register("address_2", {
+                    required: "El domicilio de notificaciones es obligatorio",
+                })}
+                errors={errors}
+                touchedFields={touchedFields}
+                submitCount={submitCount}
+            />
 
-                {/* Teléfono */}
-                <Input
-                    label="Teléfono"
-                    name="phone"
-                    placeholder="Apolo"
-                    register={register}
-                    required
-                    errors={errors}
-                />
+            <Input
+                label="Teléfono"
+                name="phone"
+                placeholder="+34612345678"
+                register={register("phone", {
+                    required: "El teléfono es obligatorio",
+                    pattern: {
+                        value: /^\+34[0-9]{9}$/,
+                        message: "Debe empezar con +34 y tener 9 dígitos",
+                    },
+                })}
+                errors={errors}
+                touchedFields={touchedFields}
+                submitCount={submitCount}
+            />
 
-                {/* Cuenta Bancaria */}
-                <Input
-                    label="Cuenta Bancaria"
-                    name="bank_account"
-                    placeholder="Apolo"
-                    register={register}
-                    required
-                    errors={errors}
-                />
+            <Input
+                label="Cuenta Bancaria"
+                name="bank_account"
+                placeholder="ES83 0182 6517 7302 0197 5760"
+                register={register("bank_account", {
+                    required: "La cuenta bancaria es obligatoria",
+                    pattern: {
+                        value: /^ES\d{2}(?:\s?\d{4}){5}$/,
+                        message: "IBAN  inválido (Ej: ESXX XXXX XXXX XXXX XXXX XXXX)",
+                    },
+                })}
+                onInput={(e) => {
+                    const target = e.target as HTMLInputElement;
+                    target.value = formatIbanES(target.value);
+                }}
+                errors={errors}
+                touchedFields={touchedFields}
+                submitCount={submitCount}
+            />
 
-                <Input
-                    label="CIF"
-                    name="cif"
-                    placeholder="Apolo"
-                    register={register}
-                    required
-                    errors={errors}
-                />
+            <Input
+                label="CIF"
+                name="cif"
+                placeholder="B56263304"
+                register={register("cif", {
+                    required: "El CIF es obligatorio",
+                    pattern: {
+                        value: /^[A-Z]\d{7}[A-Z0-9]$/,
+                        message: "CIF inválido. Ej: B56263304",
+                    },
+                })}
+                errors={errors}
+                touchedFields={touchedFields}
+                submitCount={submitCount}
+            />
 
-                <Input
-                    label="Razon Social"
-                    name="companyName"
-                    placeholder="Apolo"
-                    register={register}
-                    required
-                    errors={errors}
-                />
-
-            </div>
+            <Input
+                label="Razón Social"
+                name="companyName"
+                register={register("companyName", {
+                    required: "La razón social es obligatoria",
+                    maxLength: {
+                        value: 50,
+                        message: "La razón social debe tener máximo 50 caracteres",
+                    },
+                })}
+                errors={errors}
+                touchedFields={touchedFields}
+                submitCount={submitCount}
+            />
         </div>
     );
 }

@@ -7,25 +7,28 @@ import { Card } from "@/components/ui/Card";
 import { useContratoStore, DocumentState } from "@/app/store/contracts/contracts.store";
 import { useState } from "react";
 import { createContractSignature } from "@/app/services/Contracts/contract.service";
+import { useAlertStore } from '../../store/ui/alert.store';
+import { useLoadingStore } from "@/app/store/ui/loading.store";
 
 export const DocumentsComponent = () => {
     const router = useRouter();
     const { person, setDocumentos, setSignatureResult } = useContratoStore();
 
     const [documents, setDocuments] = useState<DocumentState>({});
-    const [loading, setLoading] = useState(false);
+    const { loading, setLoading } = useLoadingStore();
+    const { showAlert } = useAlertStore();
 
     if (!person) return null;
 
     const handleFileSelect = (type: keyof DocumentState, file: File) => {
         setDocuments((prev) => ({
             ...prev,
-            [type]: file,
+            [type]: file
         }));
     };
 
     const requiredDocs =
-        person.type === "empresa"
+        person.type === "Company"
             ? ["dni_front", "dni_back", "aeat", "ss", "bank", "cif"]
             : ["dni_front", "dni_back", "aeat", "ss", "bank"];
 
@@ -41,14 +44,13 @@ export const DocumentsComponent = () => {
         );
 
         if (missing.length) {
-            alert("Faltan documentos obligatorios");
+            showAlert("Faltan documentos obligatorios", "error");
             return;
         }
 
         setLoading(true);
 
         try {
-            // Guardamos SOLO documentos
             setDocumentos(documents);
 
             const now = new Date();
@@ -71,19 +73,39 @@ export const DocumentsComponent = () => {
                 cif: person.cif ?? "",
                 contractEmail: person.email,
                 companyName: person.companyName ?? "",
+                bankAccount: person.bank_account ?? "",
                 subject: "Contrato Colaboración",
                 message: "Por favor firma el contrato.",
             };
 
-            const result = await createContractSignature(payload, documents);
+            const response = await createContractSignature(payload, documents);
 
+            if (!response.isSuccess || !response.result) {
+                showAlert(
+                    response.errorMessages?.[0] ||
+                    response.displayMessage ||
+                    "No se pudo generar el contrato",
+                    "error"
+                );
+                return;
+            }
 
-            setSignatureResult(result.requestId, result.signingUrl ?? result.url);
+            showAlert("Contrato generado correctamente", "success");
+
+            setSignatureResult(
+                response.result.requestId,
+                response.result.signingUrl
+            );
+
             router.push("/signature");
+
+        } catch (e) {
+            showAlert("Error inesperado al generar el contrato", "error");
         } finally {
             setLoading(false);
         }
     };
+
 
     return (
 
@@ -103,7 +125,7 @@ export const DocumentsComponent = () => {
                 <div className="flex-1 overflow-y-auto mt-4 pr-1">
                     <FormDocument
                         onFileSelect={handleFileSelect}
-                        isCompany={person.type === "empresa"}
+                        isCompany={person.type === "Company"}
                     />
                 </div>
 
