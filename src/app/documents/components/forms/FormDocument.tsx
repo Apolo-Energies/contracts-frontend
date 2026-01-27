@@ -38,7 +38,7 @@ export const FormDocument = ({ onFileSelect, isCompany }: Props) => {
             {isCompany && (
                 <DropzoneUpload
                     label="CIF de la empresa"
-                    onFileSelect={(f) => onFileSelect("cif", f)}
+                    onFileSelect={(f) => onFileSelect("cif_file", f)}
                 />
             )}
 

@@ -29,7 +29,7 @@ export const DocumentsComponent = () => {
 
     const requiredDocs =
         person.type === "Company"
-            ? ["dni_front", "dni_back", "aeat", "ss", "bank", "cif"]
+            ? ["dni_front", "dni_back", "aeat", "ss", "bank", "cif_file"]
             : ["dni_front", "dni_back", "aeat", "ss", "bank"];
 
     const progress = Math.round(

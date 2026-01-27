@@ -20,7 +20,7 @@ export interface DocumentState {
   aeat?: File;
   ss?: File;
   bank?: File;
-  cif?: File;
+  cif_file?: File;
 }
 
 
