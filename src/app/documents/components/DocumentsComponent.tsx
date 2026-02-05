@@ -66,7 +66,7 @@ export const DocumentsComponent = () => {
                 month: now
                     .toLocaleString("es-ES", { month: "long" })
                     .replace(/^./, (c) => c.toUpperCase()),
-                year: String(new Date().getFullYear() % 10),
+                year: String(new Date().getFullYear()),
                 dni: person.dni ?? "",
                 address1: person.address_1 ?? "",
                 address2: person.address_2 ?? "",
@@ -79,7 +79,7 @@ export const DocumentsComponent = () => {
             };
 
             const response = await createContractSignature(payload, documents);
-
+            console.log("createContractSignature response:", response);
             if (!response.isSuccess || !response.result) {
                 showAlert(
                     response.errorMessages?.[0] ||
