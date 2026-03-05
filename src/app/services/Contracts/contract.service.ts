@@ -20,6 +20,7 @@ export type CreateContractPayload = {
     surnames?: string;
     companyName?: string;
     bankAccount: string;
+    kind: number;
 };
 
 export interface DocumentState {
