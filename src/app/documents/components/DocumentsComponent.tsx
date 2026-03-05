@@ -62,6 +62,7 @@ export const DocumentsComponent = () => {
                 surnames: person.surnames,
                 flowType: 0,
                 contractType: person.type,
+                kind: 1,
                 day: String(now.getDate()).padStart(2, "0"),
                 month: now
                     .toLocaleString("es-ES", { month: "long" })
@@ -76,6 +77,7 @@ export const DocumentsComponent = () => {
                 bankAccount: person.bank_account ?? "",
                 subject: "Contrato Colaboración",
                 message: "Por favor firma el contrato.",
+                
             };
 
             const response = await createContractSignature(payload, documents);
