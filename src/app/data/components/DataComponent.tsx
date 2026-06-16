@@ -44,10 +44,11 @@ export const DataComponent = () => {
           "notificationCity", "notificationStreet", "notificationNumber",
         ];
 
+    const vals = values as unknown as Record<string, unknown>;
     const filled = relevantFields.filter(
       (field) =>
-        typeof (values as Record<string, unknown>)[field] === "string" &&
-        ((values as Record<string, unknown>)[field] as string).trim() !== ""
+        typeof vals[field] === "string" &&
+        (vals[field] as string).trim() !== ""
     );
 
     return Math.round((filled.length / relevantFields.length) * 100);
