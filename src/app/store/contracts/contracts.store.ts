@@ -2,16 +2,20 @@ import { create } from "zustand";
 
 export interface PersonState {
   type: "Individual" | "Company";
-  dni?: string,
-  name?: string,
-  surnames?: string,
-  address_1?: string,
-  address_2?: string,
-  email?: string,
-  bank_account?: string,
-  phone?: string,
-  cif?: string,
-  companyName?: string,
+  dni?: string;
+  name?: string;
+  surnames?: string;
+  legalCity?: string;
+  legalStreet?: string;
+  legalNumber?: string;
+  notificationCity?: string;
+  notificationStreet?: string;
+  notificationNumber?: string;
+  email?: string;
+  bank_account?: string;
+  phone?: string;
+  cif?: string;
+  companyName?: string;
 }
 
 export interface DocumentState {
@@ -21,6 +25,7 @@ export interface DocumentState {
   ss?: File;
   bank?: File;
   cif_file?: File;
+  constitution_deed?: File;
 }
 
 
@@ -29,12 +34,16 @@ interface ContractStore {
   document: DocumentState | null;
   documentos?: { filePreview?: string; type?: string };
 
+  contractId: string | null;
+  sendToken: string | null;
+
   requestId: string | null;
   signingUrl: string | null;
 
   setDatos: (data: PersonState) => void;
   setDocumentos: (data: DocumentState) => void;
 
+  setContractResult: (contractId: string, sendToken: string) => void;
   setSignatureResult: (requestId: string, signingUrl: string) => void;
 
   reset: () => void;
@@ -45,12 +54,17 @@ export const useContratoStore = create<ContractStore>((set) => ({
   document: null,
   documentos: undefined,
 
+  contractId: null,
+  sendToken: null,
+
   requestId: null,
   signingUrl: null,
 
   setDatos: (data) => set({ person: data }),
 
   setDocumentos: (data) => set({ document: data }),
+
+  setContractResult: (contractId, sendToken) => set({ contractId, sendToken }),
 
   setSignatureResult: (requestId, signingUrl) =>
     set({ requestId, signingUrl }),
@@ -59,7 +73,9 @@ export const useContratoStore = create<ContractStore>((set) => ({
     person: null,
     document: null,
     documentos: undefined,
+    contractId: null,
+    sendToken: null,
     requestId: null,
-    signingUrl: null
+    signingUrl: null,
   }),
 }));
