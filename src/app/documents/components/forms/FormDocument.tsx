@@ -42,6 +42,13 @@ export const FormDocument = ({ onFileSelect, isCompany }: Props) => {
                 />
             )}
 
+            {isCompany && (
+                <DropzoneUpload
+                    label="Escrituras de constitución"
+                    onFileSelect={(f) => onFileSelect("constitution_deed", f)}
+                />
+            )}
+
         </div>
     );
 };

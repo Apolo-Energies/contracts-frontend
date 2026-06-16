@@ -1,14 +1,17 @@
 import {
+    Control,
     FieldErrors,
     UseFormRegister,
     FieldNamesMarkedBoolean,
 } from "react-hook-form";
 import { ArtificialPerson } from "../../interfaces/person";
 import { Input } from "@/components/Inputs/Input";
+import { PhoneInput } from "@/components/Inputs/PhoneInput";
 import { formatIbanES } from "@/utils/formats";
 
 interface Props {
     register: UseFormRegister<ArtificialPerson>;
+    control: Control<ArtificialPerson>;
     errors: FieldErrors<ArtificialPerson>;
     touchedFields: FieldNamesMarkedBoolean<ArtificialPerson>;
     submitCount: number;
@@ -16,12 +19,14 @@ interface Props {
 
 export const FormArtificialPerson = ({
     register,
+    control,
     errors,
     touchedFields,
     submitCount,
 }: Props) => {
     return (
         <div className="grid grid-cols-1 gap-6">
+
             <Input
                 label="DNI"
                 name="dni"
@@ -59,10 +64,7 @@ export const FormArtificialPerson = ({
                 name="name"
                 register={register("name", {
                     required: "El nombre es obligatorio",
-                    maxLength: {
-                        value: 50,
-                        message: "El nombre debe tener máximo 50 caracteres",
-                    },
+                    maxLength: { value: 50, message: "Máximo 50 caracteres" },
                 })}
                 errors={errors}
                 touchedFields={touchedFields}
@@ -74,69 +76,8 @@ export const FormArtificialPerson = ({
                 name="surnames"
                 register={register("surnames", {
                     required: "Los apellidos son obligatorios",
-                    maxLength: {
-                        value: 50,
-                        message: "Los apellidos deben tener máximo 50 caracteres",
-                    },
+                    maxLength: { value: 50, message: "Máximo 50 caracteres" },
                 })}
-                errors={errors}
-                touchedFields={touchedFields}
-                submitCount={submitCount}
-            />
-
-            <Input
-                label="Domicilio Social"
-                name="address_1"
-                register={register("address_1", {
-                    required: "El domicilio social es obligatorio",
-                })}
-                errors={errors}
-                touchedFields={touchedFields}
-                submitCount={submitCount}
-            />
-
-            <Input
-                label="Domicilio Notificaciones"
-                name="address_2"
-                register={register("address_2", {
-                    required: "El domicilio de notificaciones es obligatorio",
-                })}
-                errors={errors}
-                touchedFields={touchedFields}
-                submitCount={submitCount}
-            />
-
-            <Input
-                label="Teléfono"
-                name="phone"
-                placeholder="+34612345678"
-                register={register("phone", {
-                    required: "El teléfono es obligatorio",
-                    pattern: {
-                        value: /^\+34[0-9]{9}$/,
-                        message: "Debe empezar con +34 y tener 9 dígitos",
-                    },
-                })}
-                errors={errors}
-                touchedFields={touchedFields}
-                submitCount={submitCount}
-            />
-
-            <Input
-                label="Cuenta Bancaria"
-                name="bank_account"
-                placeholder="ES83 0182 6517 7302 0197 5760"
-                register={register("bank_account", {
-                    required: "La cuenta bancaria es obligatoria",
-                    pattern: {
-                        value: /^ES\d{2}(?:\s?\d{4}){5}$/,
-                        message: "IBAN  inválido (Ej: ESXX XXXX XXXX XXXX XXXX XXXX)",
-                    },
-                })}
-                onInput={(e) => {
-                    const target = e.target as HTMLInputElement;
-                    target.value = formatIbanES(target.value);
-                }}
                 errors={errors}
                 touchedFields={touchedFields}
                 submitCount={submitCount}
@@ -163,15 +104,100 @@ export const FormArtificialPerson = ({
                 name="companyName"
                 register={register("companyName", {
                     required: "La razón social es obligatoria",
-                    maxLength: {
-                        value: 50,
-                        message: "La razón social debe tener máximo 50 caracteres",
-                    },
+                    maxLength: { value: 50, message: "Máximo 50 caracteres" },
                 })}
                 errors={errors}
                 touchedFields={touchedFields}
                 submitCount={submitCount}
             />
+
+            <p className="text-sm font-medium -mb-2">Domicilio Social</p>
+
+            <Input
+                label="Ciudad"
+                name="legalCity"
+                register={register("legalCity", { required: "La ciudad es obligatoria" })}
+                errors={errors}
+                touchedFields={touchedFields}
+                submitCount={submitCount}
+            />
+
+            <Input
+                label="Calle"
+                name="legalStreet"
+                register={register("legalStreet", { required: "La calle es obligatoria" })}
+                errors={errors}
+                touchedFields={touchedFields}
+                submitCount={submitCount}
+            />
+
+            <Input
+                label="Número"
+                name="legalNumber"
+                register={register("legalNumber", { required: "El número es obligatorio" })}
+                errors={errors}
+                touchedFields={touchedFields}
+                submitCount={submitCount}
+            />
+
+            <p className="text-sm font-medium -mb-2">Domicilio de Notificaciones</p>
+
+            <Input
+                label="Ciudad"
+                name="notificationCity"
+                register={register("notificationCity", { required: "La ciudad es obligatoria" })}
+                errors={errors}
+                touchedFields={touchedFields}
+                submitCount={submitCount}
+            />
+
+            <Input
+                label="Calle"
+                name="notificationStreet"
+                register={register("notificationStreet", { required: "La calle es obligatoria" })}
+                errors={errors}
+                touchedFields={touchedFields}
+                submitCount={submitCount}
+            />
+
+            <Input
+                label="Número"
+                name="notificationNumber"
+                register={register("notificationNumber", { required: "El número es obligatorio" })}
+                errors={errors}
+                touchedFields={touchedFields}
+                submitCount={submitCount}
+            />
+
+            <PhoneInput
+                label="Teléfono"
+                name="phone"
+                control={control}
+                errors={errors}
+                touchedFields={touchedFields}
+                submitCount={submitCount}
+            />
+
+            <Input
+                label="Cuenta Bancaria"
+                name="bank_account"
+                placeholder="ES83 0182 6517 7302 0197 5760"
+                register={register("bank_account", {
+                    required: "La cuenta bancaria es obligatoria",
+                    pattern: {
+                        value: /^ES\d{2}(?:\s?\d{4}){5}$/,
+                        message: "IBAN inválido (Ej: ESXX XXXX XXXX XXXX XXXX XXXX)",
+                    },
+                })}
+                onInput={(e) => {
+                    const target = e.target as HTMLInputElement;
+                    target.value = formatIbanES(target.value);
+                }}
+                errors={errors}
+                touchedFields={touchedFields}
+                submitCount={submitCount}
+            />
+
         </div>
     );
-}
+};
