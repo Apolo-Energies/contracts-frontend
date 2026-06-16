@@ -6,13 +6,14 @@ import { Button } from "@/components/buttons/button";
 import { Card } from "@/components/ui/Card";
 import { useContratoStore, DocumentState } from "@/app/store/contracts/contracts.store";
 import { useState } from "react";
-import { createContractSignature } from "@/app/services/Contracts/contract.service";
+import { createContractPreview } from "@/app/services/Contracts/contract.service";
+import { isApiError } from "@/app/services/interfaces/ApiResponse";
 import { useAlertStore } from '../../store/ui/alert.store';
 import { useLoadingStore } from "@/app/store/ui/loading.store";
 
 export const DocumentsComponent = () => {
     const router = useRouter();
-    const { person, setDocumentos, setSignatureResult } = useContratoStore();
+    const { person, setDocumentos, setContractResult } = useContratoStore();
 
     const [documents, setDocuments] = useState<DocumentState>({});
     const { loading, setLoading } = useLoadingStore();
@@ -29,7 +30,7 @@ export const DocumentsComponent = () => {
 
     const requiredDocs =
         person.type === "Company"
-            ? ["dni_front", "dni_back", "aeat", "ss", "bank", "cif_file"]
+            ? ["dni_front", "dni_back", "aeat", "ss", "bank", "cif_file", "constitution_deed"]
             : ["dni_front", "dni_back", "aeat", "ss", "bank"];
 
     const progress = Math.round(
@@ -69,8 +70,8 @@ export const DocumentsComponent = () => {
                     .replace(/^./, (c) => c.toUpperCase()),
                 year: String(new Date().getFullYear()),
                 dni: person.dni ?? "",
-                address1: person.address_1 ?? "",
-                address2: person.address_2 ?? "",
+                address1: `${person.legalCity ?? ""}, ${person.legalStreet ?? ""}, ${person.legalNumber ?? ""}`,
+                address2: `${person.notificationCity ?? ""}, ${person.notificationStreet ?? ""}, ${person.notificationNumber ?? ""}`,
                 cif: person.cif ?? "",
                 contractEmail: person.email,
                 companyName: person.companyName ?? "",
@@ -80,29 +81,16 @@ export const DocumentsComponent = () => {
                 
             };
 
-            const response = await createContractSignature(payload, documents);
-            console.log("createContractSignature response:", response);
-            if (!response.isSuccess || !response.result) {
-                showAlert(
-                    response.errorMessages?.[0] ||
-                    response.displayMessage ||
-                    "No se pudo generar el contrato",
-                    "error"
-                );
+            const response = await createContractPreview(payload, documents);
+            if (isApiError(response)) {
+                showAlert(response.error, "error");
                 return;
             }
 
-            showAlert("Contrato generado correctamente", "success");
+            setContractResult(response.contractId, response.sendToken);
 
-            setSignatureResult(
-                response.result.requestId,
-                response.result.signingUrl
-            );
+            router.push("/preview");
 
-            router.push("/signature");
-
-        } catch (e) {
-            showAlert("Error inesperado al generar el contrato", "error");
         } finally {
             setLoading(false);
         }
