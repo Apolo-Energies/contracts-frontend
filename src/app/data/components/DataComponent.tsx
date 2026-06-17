@@ -34,12 +34,12 @@ export const DataComponent = () => {
     const relevantFields =
       view === "Individual"
         ? [
-          "dni", "name", "surnames", "email", "bank_account", "phone",
+          "dni", "name", "surnames", "email", "bank_account", "phone", "postalCode",
           "legalCity", "legalStreet", "legalNumber",
           "notificationCity", "notificationStreet", "notificationNumber",
         ]
         : [
-          "dni", "name", "surnames", "cif", "companyName", "email", "bank_account", "phone",
+          "dni", "name", "surnames", "cif", "companyName", "email", "bank_account", "phone", "postalCode",
           "legalCity", "legalStreet", "legalNumber",
           "notificationCity", "notificationStreet", "notificationNumber",
         ];

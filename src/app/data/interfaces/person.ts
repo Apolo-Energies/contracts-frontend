@@ -8,6 +8,7 @@ export interface NaturalPerson {
     notificationCity: string;
     notificationStreet: string;
     notificationNumber: string;
+    postalCode?: string;
     email: string;
     bank_account: string;
     phone: string;
@@ -25,6 +26,7 @@ export interface ArtificialPerson {
     notificationCity: string;
     notificationStreet: string;
     notificationNumber: string;
+    postalCode?: string;
     email: string;
     phone: string;
     bank_account: string;
