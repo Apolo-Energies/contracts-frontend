@@ -72,6 +72,7 @@ export const DocumentsComponent = () => {
                 dni: person.dni ?? "",
                 address1: `${person.legalCity ?? ""}, ${person.legalStreet ?? ""}, ${person.legalNumber ?? ""}`,
                 address2: `${person.notificationCity ?? ""}, ${person.notificationStreet ?? ""}, ${person.notificationNumber ?? ""}`,
+                postalCode: person.postalCode ?? "",
                 cif: person.cif ?? "",
                 contractEmail: person.email,
                 companyName: person.companyName ?? "",

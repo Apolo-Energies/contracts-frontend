@@ -11,6 +11,7 @@ export interface PersonState {
   notificationCity?: string;
   notificationStreet?: string;
   notificationNumber?: string;
+  postalCode?: string;
   email?: string;
   bank_account?: string;
   phone?: string;

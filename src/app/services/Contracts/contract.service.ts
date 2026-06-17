@@ -13,6 +13,7 @@ export type CreateContractPayload = {
     dni?: string;
     address1?: string;
     address2?: string;
+    postalCode?: string;
     cif?: string;
     contractEmail?: string;
     subject?: string;

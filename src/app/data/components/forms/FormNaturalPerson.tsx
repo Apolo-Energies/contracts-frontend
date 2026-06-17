@@ -141,6 +141,18 @@ export const FormNaturalPerson = ({
                 submitCount={submitCount}
             />
 
+            <Input
+                label="Código Postal"
+                name="postalCode"
+                placeholder="28001"
+                register={register("postalCode", {
+                    pattern: { value: /^\d{5}$/, message: "Debe tener 5 dígitos" },
+                })}
+                errors={errors}
+                touchedFields={touchedFields}
+                submitCount={submitCount}
+            />
+
             <PhoneInput
                 label="Teléfono"
                 name="phone"

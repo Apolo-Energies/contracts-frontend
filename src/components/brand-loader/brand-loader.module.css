@@ -1,0 +1,76 @@
+/* Overlay entrance */
+@keyframes blOverlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Content entrance */
+@keyframes blContentIn {
+  from { opacity: 0; transform: translateY(14px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+/* Ring spin */
+@keyframes blSpinKf {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* Arc pulse */
+@keyframes blArcKf {
+  0%, 100% { opacity: 0.9; }
+  50%       { opacity: 1;   }
+}
+
+/* Bar fill transition handled inline; icon dance */
+@keyframes blBarIconDance {
+  0%, 100% { transform: translate(-50%, -50%) rotate(90deg)  scale(1);    }
+  50%       { transform: translate(-50%, -50%) rotate(102deg) scale(1.15); }
+}
+
+/* Classes */
+.blOverlay {
+  animation: blOverlayIn 320ms ease-out;
+  backdrop-filter: blur(14px) saturate(140%);
+}
+
+.blContent {
+  animation: blContentIn 420ms cubic-bezier(0.22, 1, 0.36, 1) 80ms both;
+}
+
+.blArc {
+  animation: blArcKf 2.4s ease-in-out infinite;
+}
+
+.blBarFill {
+  transition: width 420ms cubic-bezier(0.4, 0, 0.2, 1);
+  height: 100%;
+  border-radius: 9999px;
+}
+
+.blBarIcon {
+  position: absolute;
+  top: 50%;
+  width: 22px;
+  height: 22px;
+  transition: left 420ms cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+}
+
+.blBarIconImg {
+  animation: blBarIconDance 1.6s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .blOverlay,
+  .blContent,
+  .blSpin,
+  .blArc,
+  .blBarIconImg {
+    animation: none !important;
+  }
+  .blBarFill,
+  .blBarIcon {
+    transition: none !important;
+  }
+}
