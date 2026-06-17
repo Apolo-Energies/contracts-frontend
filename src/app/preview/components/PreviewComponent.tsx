@@ -8,15 +8,17 @@ import { useContratoStore } from "@/app/store/contracts/contracts.store";
 import { getContractPreviewBlob, sendContractForSigning } from "@/app/services/Contracts/contract.service";
 import { isApiError } from "@/app/services/interfaces/ApiResponse";
 import { useAlertStore } from "@/app/store/ui/alert.store";
-import { useLoadingStore } from "@/app/store/ui/loading.store";
+import { BrandLoader } from "@/components/brand-loader/BrandLoader";
 
 export const PreviewComponent = () => {
     const router = useRouter();
     const { contractId, sendToken, setSignatureResult } = useContratoStore();
     const { showAlert } = useAlertStore();
-    const { loading, setLoading } = useLoadingStore();
+
     const [signLater, setSignLater] = useState(false);
     const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+    const [loadingPreview, setLoadingPreview] = useState(false);
+    const [loadingSigning, setLoadingSigning] = useState(false);
 
     useEffect(() => {
         if (!contractId) {
@@ -25,6 +27,7 @@ export const PreviewComponent = () => {
         }
 
         let objectUrl: string;
+        setLoadingPreview(true);
 
         getContractPreviewBlob(contractId).then((result) => {
             if (isApiError(result)) {
@@ -33,6 +36,8 @@ export const PreviewComponent = () => {
             }
             objectUrl = URL.createObjectURL(result);
             setPdfUrl(objectUrl);
+        }).finally(() => {
+            setLoadingPreview(false);
         });
 
         return () => {
@@ -43,7 +48,7 @@ export const PreviewComponent = () => {
     const handleProceedToSign = async () => {
         if (!contractId || !sendToken) return;
 
-        setLoading(true);
+        setLoadingSigning(true);
         try {
             const response = await sendContractForSigning(contractId, sendToken);
             if (isApiError(response)) {
@@ -51,10 +56,10 @@ export const PreviewComponent = () => {
                 return;
             }
 
-            setSignatureResult(response.requestId, response.signingUrl);
+            setSignatureResult(response.requestId, response.signingUrl ?? "");
             router.push("/signature");
         } finally {
-            setLoading(false);
+            setLoadingSigning(false);
         }
     };
 
@@ -78,52 +83,76 @@ export const PreviewComponent = () => {
     }
 
     return (
-        <div className="flex flex-col items-center justify-start pt-8 pb-8 px-4">
-            <Card className="w-full max-w-6xl rounded-lg px-6 py-6 flex flex-col gap-4">
+        <>
+            {/* Loader — vista previa */}
+            <BrandLoader
+                visible={loadingPreview}
+                fullscreen
+                size={200}
+                title="Generando vista previa"
+                description="Estamos preparando tu contrato para que puedas revisarlo."
+                showWordmark={false}
+                showMicrocopy={false}
+            />
 
-                <div className="space-y-1">
-                    <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                        Vista previa
-                    </p>
-                    <p className="text-2xl font-semibold">
-                        Estás viendo una vista previa de tu contrato
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                        Revisa el documento antes de proceder a la firma. Ninguna acción
-                        legal ha sido iniciada todavía.
-                    </p>
-                </div>
+            {/* Loader — envío a Signaturit */}
+            <BrandLoader
+                visible={loadingSigning}
+                fullscreen
+                size={200}
+                title="Procesando tu contrato"
+                description="Estamos enviando tu contrato para la firma. Esto puede tardar unos minutos, por favor espera."
+                microcopy="No cierres esta ventana"
+                showWordmark={false}
+            />
 
-                {pdfUrl ? (
-                    <iframe
-                        src={pdfUrl}
-                        className="w-full h-[78vh] border rounded-lg"
-                    />
-                ) : (
-                    <div className="w-full h-[78vh] flex items-center justify-center border rounded-lg text-sm text-muted-foreground">
-                        Cargando vista previa...
+            <div className="flex flex-col items-center justify-start pt-8 pb-8 px-4">
+                <Card className="w-full max-w-6xl rounded-lg px-6 py-6 flex flex-col gap-4">
+
+                    <div className="space-y-1">
+                        <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                            Vista previa
+                        </p>
+                        <p className="text-2xl font-semibold">
+                            Estás viendo una vista previa de tu contrato
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                            Revisa el documento antes de proceder a la firma. Ninguna acción
+                            legal ha sido iniciada todavía.
+                        </p>
                     </div>
-                )}
 
-                <div className="flex flex-col sm:flex-row justify-center gap-3 pt-2 border-t border-border">
-                    <Button
-                        size="sm"
-                        onClick={handleProceedToSign}
-                        disabled={loading || !pdfUrl}
-                    >
-                        {loading ? "Iniciando firma..." : "Proceder a firmar"}
-                    </Button>
-                    <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setSignLater(true)}
-                        disabled={loading}
-                    >
-                        Firmar más tarde
-                    </Button>
-                </div>
+                    {pdfUrl ? (
+                        <iframe
+                            src={pdfUrl}
+                            className="w-full h-[78vh] border rounded-lg"
+                        />
+                    ) : (
+                        <div className="w-full h-[78vh] flex items-center justify-center border rounded-lg text-sm text-muted-foreground">
+                            Preparando vista previa...
+                        </div>
+                    )}
 
-            </Card>
-        </div>
+                    <div className="flex flex-col sm:flex-row justify-center gap-3 pt-2 border-t border-border">
+                        <Button
+                            size="sm"
+                            onClick={handleProceedToSign}
+                            disabled={loadingSigning || !pdfUrl}
+                        >
+                            Proceder a firmar
+                        </Button>
+                        <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setSignLater(true)}
+                            disabled={loadingSigning}
+                        >
+                            Firmar más tarde
+                        </Button>
+                    </div>
+
+                </Card>
+            </div>
+        </>
     );
 };
