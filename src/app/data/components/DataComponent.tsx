@@ -56,15 +56,15 @@ export const DataComponent = () => {
     return Math.round((filled.length / relevantFields.length) * 100);
   };
 
-  const applyFieldErrors = <T extends Record<string, unknown>>(
+  const applyFieldErrors = (
     errors: Record<string, string>,
-    setError: (field: keyof T, error: { type: string; message: string }) => void
+    setError: (field: string, error: { type: string; message: string }) => void
   ) => {
     Object.entries(errors).forEach(([field, message]) => {
       if (field === "general") {
         showAlert(message, "error");
       } else {
-        setError(field as keyof T, { type: "server", message });
+        setError(field, { type: "server", message });
       }
     });
   };
@@ -86,7 +86,9 @@ export const DataComponent = () => {
       });
 
       if (!result.isValid) {
-        applyFieldErrors<NaturalPerson>(result.fieldErrors, formAutonomo.setError);
+        applyFieldErrors(result.fieldErrors, (f, e) =>
+          formAutonomo.setError(f as keyof NaturalPerson, e)
+        );
         return;
       }
 
@@ -114,7 +116,9 @@ export const DataComponent = () => {
       });
 
       if (!result.isValid) {
-        applyFieldErrors<ArtificialPerson>(result.fieldErrors, formEmpresa.setError);
+        applyFieldErrors(result.fieldErrors, (f, e) =>
+          formEmpresa.setError(f as keyof ArtificialPerson, e)
+        );
         return;
       }
 
