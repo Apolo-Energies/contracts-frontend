@@ -39,7 +39,8 @@ export interface ValidateRecipientPayload {
   phone: string;
   dni: string;
   name: string;
-  surnames: string;
+  lastName: string;
+  secondLastName: string;
   cif?: string | null;
   companyName?: string | null;
 }
