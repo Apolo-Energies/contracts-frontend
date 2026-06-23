@@ -12,6 +12,7 @@ import { NaturalPerson, ArtificialPerson } from "../interfaces/person";
 import { useContratoStore } from "@/app/store/contracts/contracts.store";
 import { validateRecipient } from "@/app/services/Contracts/contract.service";
 import { useLoadingStore } from "@/app/store/ui/loading.store";
+import { useAlertStore } from "@/app/store/ui/alert.store";
 
 type FormStep = "Individual" | "Company";
 
@@ -20,6 +21,7 @@ export const DataComponent = () => {
   const router = useRouter();
   const { setDatos } = useContratoStore();
   const { loading, setLoading } = useLoadingStore();
+  const { showAlert } = useAlertStore();
 
   const formAutonomo = useForm<NaturalPerson>({ mode: "onChange" });
   const formEmpresa = useForm<ArtificialPerson>({ mode: "onChange" });
@@ -34,14 +36,14 @@ export const DataComponent = () => {
     const relevantFields =
       view === "Individual"
         ? [
-          "dni", "name", "surnames", "email", "bank_account", "phone", "postalCode",
-          "legalCity", "legalStreet", "legalNumber",
-          "notificationCity", "notificationStreet", "notificationNumber",
+          "dni", "name", "surname1", "surname2", "email", "bank_account", "phone",
+          "legalStreetType", "legalStreetName", "legalNumber", "legalCity",
+          "notificationStreetType", "notificationStreetName", "notificationNumber", "notificationCity",
         ]
         : [
-          "dni", "name", "surnames", "cif", "companyName", "email", "bank_account", "phone", "postalCode",
-          "legalCity", "legalStreet", "legalNumber",
-          "notificationCity", "notificationStreet", "notificationNumber",
+          "dni", "name", "surname1", "surname2", "cif", "companyName", "email", "bank_account", "phone",
+          "legalStreetType", "legalStreetName", "legalNumber", "legalCity",
+          "notificationStreetType", "notificationStreetName", "notificationNumber", "notificationCity",
         ];
 
     const vals = values as unknown as Record<string, unknown>;
@@ -54,16 +56,21 @@ export const DataComponent = () => {
     return Math.round((filled.length / relevantFields.length) * 100);
   };
 
-  const applyFieldErrors = (
+  const applyFieldErrors = <T extends Record<string, unknown>>(
     errors: Record<string, string>,
-    setError: (field: string, error: { type: string; message: string }) => void
+    setError: (field: keyof T, error: { type: string; message: string }) => void
   ) => {
     Object.entries(errors).forEach(([field, message]) => {
-      setError(field, { type: "server", message });
+      if (field === "general") {
+        showAlert(message, "error");
+      } else {
+        setError(field as keyof T, { type: "server", message });
+      }
     });
   };
 
   const onSubmitAutonomo = async (data: NaturalPerson) => {
+    formAutonomo.clearErrors();
     setLoading(true);
     try {
       const result = await validateRecipient({
@@ -72,15 +79,14 @@ export const DataComponent = () => {
         phone: data.phone,
         dni: data.dni,
         name: data.name,
-        surnames: data.surnames,
+        lastName: data.surname1,
+        secondLastName: data.surname2,
         cif: null,
         companyName: null,
       });
 
       if (!result.isValid) {
-        applyFieldErrors(result.fieldErrors, (f, e) =>
-          formAutonomo.setError(f as keyof NaturalPerson, e)
-        );
+        applyFieldErrors<NaturalPerson>(result.fieldErrors, formAutonomo.setError);
         return;
       }
 
@@ -92,6 +98,7 @@ export const DataComponent = () => {
   };
 
   const onSubmitEmpresa = async (data: ArtificialPerson) => {
+    formEmpresa.clearErrors();
     setLoading(true);
     try {
       const result = await validateRecipient({
@@ -100,15 +107,14 @@ export const DataComponent = () => {
         phone: data.phone,
         dni: data.dni,
         name: data.name,
-        surnames: data.surnames,
+        lastName: data.surname1,
+        secondLastName: data.surname2,
         cif: data.cif,
         companyName: data.companyName,
       });
 
       if (!result.isValid) {
-        applyFieldErrors(result.fieldErrors, (f, e) =>
-          formEmpresa.setError(f as keyof ArtificialPerson, e)
-        );
+        applyFieldErrors<ArtificialPerson>(result.fieldErrors, formEmpresa.setError);
         return;
       }
 
@@ -121,7 +127,7 @@ export const DataComponent = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen px-4">
-      <Card className="w-full max-w-xl h-[90vh] rounded-lg px-8 py-6 flex flex-col">
+      <Card className="w-full max-w-2xl h-[90vh] rounded-lg px-8 py-6 flex flex-col">
 
         <div className="shrink-0 space-y-4">
           <div className="space-y-1">
