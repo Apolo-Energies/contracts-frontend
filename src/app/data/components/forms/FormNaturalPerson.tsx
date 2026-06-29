@@ -61,7 +61,7 @@ export const FormNaturalPerson = ({
             </div>
             <div className="col-span-3">
                 <Input label="DNI / NIE" name="dni" placeholder="12345678A"
-                    register={register("dni", { required: "El DNI es obligatorio", pattern: { value: /^[0-9]{8}[A-Za-z]$/, message: "Formato inválido. Ej: 12345678A" } })}
+                    register={register("dni", { required: "El DNI / NIE es obligatorio", pattern: { value: /^(?:[0-9]{8}|[XYZxyz][0-9]{7})[A-Za-z]$/, message: "Formato inválido. Ej: 12345678A o Y9655211D" } })}
                     errors={errors} touchedFields={touchedFields} submitCount={submitCount} />
             </div>
 
